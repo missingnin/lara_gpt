@@ -13,7 +13,7 @@ class WidgetAiService
         if (!empty($data)) {
             if (isset($data['event_type'])) {
                 if ($data['event_type']) {
-                    $result = $this->makeAnswer($data['chat_history'], $data['event_type']);
+                    $result = $this->makeAnswer($data['chat_history'], $data['event_type'], $data['model']);
                 }
             }
         }
@@ -21,21 +21,16 @@ class WidgetAiService
         return $result['choices'][0]['message']['content'];
     }
 
-    public function makeAnswer($chatHistory, $mode): CreateResponse
+    public function makeAnswer($chatHistory, $mode, $model): CreateResponse
     {
         $messages = [];
         $widgetSettings = json_decode(AppSetting::where('key', 'widget_settings')
             ->firstOrFail()
             ->value, true);
 
-        $messages[] = [
-            'role' => 'system',
-            'content' => $widgetSettings['instruction'],
-        ];
-
         foreach ($chatHistory as $message) {
-            $role = $message['is_client'] ? 'user' : 'assistant';
-            $content = $message['message'] . $widgetSettings['context'][$mode]['value'];
+            $role = $message['is_client']? 'user' : 'assistant';
+            $content = $message['message']. $widgetSettings['context'][$mode - 1]['value'];
 
             $messages[] = [
                 'role' => $role,
@@ -43,10 +38,18 @@ class WidgetAiService
             ];
         }
 
+        $messages[] = [
+            'role' => 'system',
+            'content' => $widgetSettings['instruction'],
+        ];
+
+        $jsonMessages = json_encode($messages, JSON_PRETTY_PRINT);
+
+        file_put_contents(base_path('1.json'), $jsonMessages);
+
         return OpenAI::chat()->create([
-            'model' => $widgetSettings['model'],
+            'model' => $model,
             'messages' => $messages,
             'max_tokens' => (int)$widgetSettings['maxTokens'],
         ]);
-    }
-}
+    }}
