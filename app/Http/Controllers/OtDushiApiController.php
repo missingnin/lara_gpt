@@ -47,6 +47,11 @@ class OtDushiApiController extends Controller
 
         try {
             $response = $this->otDushiAi->getSpreadsFromOpenAi([$imagesUrl], $prompt);
+
+            if ($response->getErrorMessage() !== null) {
+                return response()->json(['error' => $response->getErrorMessage()], $response->getErrorCode() ?? 400);
+            }
+
             return response()->json($response->getData());
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
