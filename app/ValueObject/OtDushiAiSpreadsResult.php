@@ -43,7 +43,7 @@ class OtDushiAiSpreadsResult
      */
     public function getSpreads(): array
     {
-        return $this->data['data'] ?? [];
+        return $this->data['content'] ?? [];
     }
 
     /**
