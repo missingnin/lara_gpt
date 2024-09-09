@@ -45,8 +45,9 @@ class OtDushiAiService implements OtDushiAiServiceInterface
      */
     public function getSpreadsFromOpenAi(array $imagesUrl, string $prompt): OtDushiAiSpreadsResult
     {
-        $model = '';
+        $model = 'gpt-4o-mini';
         $messages = $this->prepareSpreadsMessage($imagesUrl, $prompt);
+
         $response = $this
             ->openAiClient
             ->createCommonRequest($model, $messages, 8000);
@@ -66,7 +67,10 @@ class OtDushiAiService implements OtDushiAiServiceInterface
      */
     private function prepareSpreadsMessage(array $imagesUrl, string $prompt): array
     {
-        $messages = [
+        $messages = [];
+        $content = [];
+
+        $messages[] =
             [
                 'role' => 'system',
                 'content' => [
@@ -75,25 +79,24 @@ class OtDushiAiService implements OtDushiAiServiceInterface
                         "text" => $prompt,
                     ],
                 ],
-            ],
-        ];
+            ];
 
-        foreach ($imagesUrl as $image) {
-            $messages[] = [
-                'role' => 'user',
-                'content' => [
-                    [
-                        "type" => "image_url",
-                        "image_url" => [
-                            "url" => $image,
-                        ],
-                    ],
+        $flattenedImagesUrl = array_merge(...$imagesUrl);
+
+        foreach ($flattenedImagesUrl as $url) {
+            $content[] = [
+                "type" => "image_url",
+                "image_url" => [
+                    "url" => 'https://aborkin89.fvds.ru/' . $url,
                 ],
             ];
         }
 
-        return [
-            'messages' => $messages,
+        $messages[] = [
+            'role' => 'user',
+            'content' => $content,
         ];
+
+        return $messages;
     }
 }
