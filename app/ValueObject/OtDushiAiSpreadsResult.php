@@ -55,4 +55,14 @@ class OtDushiAiSpreadsResult
     {
         return $this->data['error'] ?? null;
     }
+
+    /**
+     * Gets the error code returned by OpenAiService.
+     *
+     * @return int|null The error code returned by OpenAiService.
+     */
+    public function getErrorCode(): ?int
+    {
+        return $this->data['code'] ?? null;
+    }
 }
