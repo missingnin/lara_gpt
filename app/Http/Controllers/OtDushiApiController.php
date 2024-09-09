@@ -52,7 +52,7 @@ class OtDushiApiController extends Controller
                 return response()->json(['error' => $response->getErrorMessage()], $response->getErrorCode() ?? 400);
             }
 
-            return response()->json($response->getData());
+            return response()->json($response->getSpreads());
         } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
