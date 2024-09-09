@@ -18,11 +18,11 @@ interface OtDushiAiServiceInterface
      *
      * This method sends an array of images to OpenAiService for processing and returns the response from OpenAiService.
      *
-     * @param array $images The array of images to send to OpenAiService.
+     * @param array $imagesUrl The array of images to send to OpenAiService.
      * @param string $prompt The text for Prompt
      * @return OtDushiAiSpreadsResult Spreads Result.
      *
      * @throws Exception If the request to OpenAiService fails.
      */
-    public function getSpreadsFromOpenAi(array $images, string $prompt): OtDushiAiSpreadsResult;
+    public function getSpreadsFromOpenAi(array $imagesUrl, string $prompt): OtDushiAiSpreadsResult;
 }

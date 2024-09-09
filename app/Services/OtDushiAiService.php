@@ -23,7 +23,7 @@ class OtDushiAiService implements OtDushiAiServiceInterface
     /**
      * Constructor.
      *
-     * @param OpenAI $openAi
+     * @param OpenAiServiceInterface $openAiClient
      */
     public function __construct(OpenAiServiceInterface $openAiClient)
     {
@@ -36,63 +36,64 @@ class OtDushiAiService implements OtDushiAiServiceInterface
      * This method sends an array of images to OpenAiService
      * for processing and returns the response from OpenAiService.
      *
-     * @param array $images The array of images to send to OpenAiService.
+     * @param array $imagesUrl The array of images to send to OpenAiService.
      * @param string $prompt The text for Prompt
      *
      * @return OtDushiAiSpreadsResult Prepared Spreads Result;
      *
      * @throws Exception If the request to OpenAiService fails.
      */
-    public function getSpreadsFromOpenAi(array $images, string $prompt): OtDushiAiSpreadsResult
+    public function getSpreadsFromOpenAi(array $imagesUrl, string $prompt): OtDushiAiSpreadsResult
     {
         $model = '';
-        $messages = $this->prepareSpreadsRequestMessage($images);
+        $messages = $this->prepareSpreadsMessage($imagesUrl, $prompt);
         $response = $this
             ->openAiClient
             ->createCommonRequest($model, $messages, 8000);
 
-        return new OtDushiAiSpreadsResult($response->json());
+        return new OtDushiAiSpreadsResult($response->toArray());
     }
 
     /**
-     * Prepares an array of images for sending to OpenAiService.
+     * Prepares the content for sending to OpenAiService.
      *
-     * This method prepares an array of images for sending
-     * to OpenAiService by converting them to a format that can be sent to OpenAiService.
+     * This method prepares the content for sending to OpenAiService by converting it to a format that can be sent to OpenAiService.
      *
-     * @param array $images The array of images to prepare.
+     * @param array $imagesUrl The array of images to prepare.
+     * @param string $prompt The text for Prompt
      *
-     * @return array The prepared array of images.
+     * @return array The prepared content.
      */
-    private function prepareImagesForRequest(array $images): array
+    private function prepareSpreadsMessage(array $imagesUrl, string $prompt): array
     {
-        $preparedImages = [];
-        foreach ($images as $image) {
-            $preparedImages[] = [
-                'image' => base64_encode(file_get_contents($image)),
-            ];
-        }
-        return $preparedImages;
-    }
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => [
+                    [
+                        "type" => "text",
+                        "text" => $prompt,
+                    ],
+                ],
+            ],
+        ];
 
-    /**
-     * Prepares an array of images for sending to OpenAiService.
-     *
-     * This method prepares an array of images for sending
-     * to OpenAiService by converting them to a format that can be sent to OpenAiService.
-     *
-     * @param array $images The array of images to prepare.
-     *
-     * @return array The prepared array of images.
-     */
-    private function prepareSpreadsRequestMessage(array $images): array
-    {
-        $preparedImages = [];
-        foreach ($images as $image) {
-            $preparedImages[] = [
-                'image' => base64_encode(file_get_contents($image)),
+        foreach ($imagesUrl as $image) {
+            $messages[] = [
+                'role' => 'user',
+                'content' => [
+                    [
+                        "type" => "image_url",
+                        "image_url" => [
+                            "url" => $image,
+                        ],
+                    ],
+                ],
             ];
         }
-        return $preparedImages;
+
+        return [
+            'messages' => $messages,
+        ];
     }
 }
