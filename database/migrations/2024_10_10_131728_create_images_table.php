@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->string('name')->unique();
-            $table->text('description');
-            $table->integer('index');
+            $table->text('description')->nullable();
+            $table->integer('index')->default(0);
             $table->integer('tokens_cost')->default(0);
         });
     }
