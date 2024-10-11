@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class GetAiSpreadsRequest extends FormRequest
+class GetAiSpreadsRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,21 +25,6 @@ class GetAiSpreadsRequest extends FormRequest
             'images' => 'required',
             'prompt' => 'required',
             'data_id' => 'required|integer',
-        ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages(): array
-    {
-        return [
-            'images.required' => 'Image URL is required',
-            'prompt.required' => 'Prompt is required',
-            'data_id.required' => 'Product ID is required',
-            'data_id.integer' => 'Product ID must be an integer',
         ];
     }
 }
