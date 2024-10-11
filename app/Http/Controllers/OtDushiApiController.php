@@ -29,11 +29,16 @@ class OtDushiApiController extends Controller
     {
         $imagesUrl = $request->input('images');
         $prompt = $request->input('prompt');
+        $productId = $request->input('product_id');
         $processor = new OtDushiAiProcessor();
 
         try {
             $processor->process(
-                [$imagesUrl, $prompt],
+                [
+                    $imagesUrl,
+                    $prompt,
+                    $productId
+                ],
                 OtDushiAiProcessTypes::GET_AI_IMAGES_DESCRIPTION
             );
 
