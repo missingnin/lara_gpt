@@ -27,18 +27,11 @@ class OtDushiApiController extends Controller
      */
     public function getAiSpreads(GetAiSpreadsRequest $request): JsonResponse
     {
-        $imagesUrl = $request->input('images');
-        $prompt = $request->input('prompt');
-        $productId = $request->input('data_id');
         $processor = new OtDushiAiProcessor();
 
         try {
             $processor->process(
-                [
-                    $imagesUrl,
-                    $prompt,
-                    $productId
-                ],
+                $request->all(),
                 OtDushiAiProcessTypes::GET_AI_IMAGES_DESCRIPTION
             );
 

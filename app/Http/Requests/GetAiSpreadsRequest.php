@@ -27,4 +27,16 @@ class GetAiSpreadsRequest extends BaseRequest
             'data_id' => 'required|integer',
         ];
     }
+
+    /**
+     * Get the validated data from the request.
+     *
+     * @param null $key
+     * @param null $default
+     * @return array
+     */
+    public function validated($key = null, $default = null): array
+    {
+        return $this->only(['images', 'prompt', 'data_id']);
+    }
 }
