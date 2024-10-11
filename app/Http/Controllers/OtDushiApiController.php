@@ -29,7 +29,7 @@ class OtDushiApiController extends Controller
     {
         $imagesUrl = $request->input('images');
         $prompt = $request->input('prompt');
-        $productId = $request->input('product_id');
+        $productId = $request->input('data_id');
         $processor = new OtDushiAiProcessor();
 
         try {

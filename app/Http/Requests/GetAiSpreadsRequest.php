@@ -26,7 +26,7 @@ class GetAiSpreadsRequest extends FormRequest
         return [
             'images' => 'required',
             'prompt' => 'required',
-            'product_id' => 'required|integer',
+            'data_id' => 'required|integer',
         ];
     }
 
@@ -40,8 +40,8 @@ class GetAiSpreadsRequest extends FormRequest
         return [
             'images.required' => 'Image URL is required',
             'prompt.required' => 'Prompt is required',
-            'product_id.required' => 'Product ID is required',
-            'product_id.integer' => 'Product ID must be an integer',
+            'data_id.required' => 'Product ID is required',
+            'data_id.integer' => 'Product ID must be an integer',
         ];
     }
 }
