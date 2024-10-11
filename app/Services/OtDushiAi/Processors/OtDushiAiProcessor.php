@@ -4,6 +4,9 @@ namespace App\Services\OtDushiAi\Processors;
 
 use App\Constants\OtDushiAiProcessTypes;
 use App\Exceptions\InvalidProcessTypeException;
+use App\Repositories\ImageRepository;
+use App\Repositories\ProductRepository;
+use InvalidArgumentException;
 
 /**
  * Class for OtDushi AI processors
@@ -28,15 +31,26 @@ class OtDushiAiProcessor
         };
     }
 
-    /**
-     * Process image description
-     *
-     * @param mixed $data
-     * @return mixed
-     */
-    protected function processImageDescription($data)
+    protected function processImageDescription(array $data): void
     {
-        return;
+        if (!isset($data['images'], $data['prompt'], $data['data_id'])) {
+            throw new InvalidArgumentException("Missing required keys in data");
+        }
+
+        $productRepository = new ProductRepository();
+        $imageRepository = new ImageRepository();
+
+        $product = $productRepository
+            ->findOrCreateByProductId($data['data_id']);
+        $existingImages = $product
+            ->images()
+            ->get();
+
+        $imageRepository->syncImages(
+            $product->getAttribute('id'),
+            $existingImages,
+            $data['images']
+        );
     }
 
     /**
@@ -45,7 +59,7 @@ class OtDushiAiProcessor
      * @param mixed $data
      * @return mixed
      */
-    protected function processSpreadsGroups($data)
+    protected function processSpreadsGroups(array $data)
     {
         return;
     }
