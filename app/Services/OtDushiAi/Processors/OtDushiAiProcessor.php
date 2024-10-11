@@ -41,7 +41,7 @@ class OtDushiAiProcessor
         $imageRepository = new ImageRepository();
 
         $product = $productRepository
-            ->findOrCreateByProductId($data['data_id']);
+            ->findOrCreateByDataId($data['data_id']);
         $existingImages = $product
             ->images()
             ->get();
