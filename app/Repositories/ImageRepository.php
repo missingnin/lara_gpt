@@ -32,12 +32,13 @@ class ImageRepository
             ->pluck('name')
             ->toArray();
 
-        foreach ($imageNames as $imageName) {
+        foreach ($imageNames as $index => $imageName) {
             if (!in_array($imageName, $existingImageNames)) {
                 Image::create(
                     [
                         'product_id' => $productId,
                         'name' => $imageName,
+                        'index' => $index,
                     ]
                 );
             }
