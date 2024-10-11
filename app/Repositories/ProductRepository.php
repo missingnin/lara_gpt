@@ -12,15 +12,16 @@ class ProductRepository
     /**
      * Find or create a product by product ID
      *
-     * @param int $productId
+     * @param int $dataId
      * @return Product
      */
-    public function findOrCreateByProductId(int $productId): Product
+    public function findOrCreateByDataId(int $dataId): Product
     {
-        $product = Product::where('id', $productId)->first();
+        $product = Product::where('data_id', $dataId)->first();
 
         if (!$product) {
-            $product = Product::create(['id' => $productId]);
+            $product = Product::create(
+                ['data_id' => $dataId,]);
         }
 
         return $product;
