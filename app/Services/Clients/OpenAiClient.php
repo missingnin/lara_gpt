@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Clients;
 
+use App\Services\OpenAiServiceInterface;
 use Exception;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
@@ -12,7 +13,7 @@ use OpenAI\Responses\Chat\CreateResponse;
  *
  * @package App/Services
  */
-class OpenAiService implements OpenAiServiceInterface
+class OpenAiClient implements OpenAiServiceInterface
 {
     /**
      * Creates a request to OpenAI with the specified parameters.
