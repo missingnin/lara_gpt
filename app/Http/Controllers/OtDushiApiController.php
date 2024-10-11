@@ -17,6 +17,21 @@ use Illuminate\Http\JsonResponse;
 class OtDushiApiController extends Controller
 {
     /**
+     * @var OtDushiAiProcessor
+     */
+    private OtDushiAiProcessor $otDushiAiProcessor;
+
+    /**
+     * Constructor
+     *
+     * @param OtDushiAiProcessor $otDushiAiProcessor
+     */
+    public function __construct(OtDushiAiProcessor $otDushiAiProcessor)
+    {
+        $this->otDushiAiProcessor = $otDushiAiProcessor;
+    }
+
+    /**
      * Describe an image using OpenAiService.
      *
      * This method sends an image to OpenAiService for analysis and returns the response from OpenAiService.
@@ -27,10 +42,8 @@ class OtDushiApiController extends Controller
      */
     public function getAiSpreads(GetAiSpreadsRequest $request): JsonResponse
     {
-        $processor = new OtDushiAiProcessor();
-
         try {
-            $processor->process(
+            $this->otDushiAiProcessor->process(
                 $request->all(),
                 OtDushiAiProcessTypes::GET_AI_IMAGES_DESCRIPTION
             );
