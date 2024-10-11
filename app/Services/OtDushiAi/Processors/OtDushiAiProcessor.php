@@ -4,9 +4,11 @@ namespace App\Services\OtDushiAi\Processors;
 
 use App\Constants\OtDushiAiProcessTypes;
 use App\Exceptions\InvalidProcessTypeException;
-use App\Repositories\ImageRepository;
+use App\Models\Product;
 use App\Repositories\ProductRepository;
+use App\Services\ImageService;
 use InvalidArgumentException;
+use Illuminate\Support\Collection;
 
 /**
  * Class for OtDushi AI processors
@@ -14,53 +16,71 @@ use InvalidArgumentException;
 class OtDushiAiProcessor
 {
     /**
+     * @var ImageService
+     */
+    private ImageService $imageService;
+
+    /**
+     * @var ProductRepository
+     */
+    private ProductRepository $productRepository;
+
+    /**
+     * Constructor
+     *
+     * @param ImageService $imageService
+     * @param ProductRepository $productRepository
+     */
+    public function __construct(ImageService $imageService, ProductRepository $productRepository)
+    {
+        $this->imageService = $imageService;
+        $this->productRepository = $productRepository;
+    }
+
+    /**
      * Process data based on the process type
      *
      * @param mixed $data
-     * @param string $processType
+     * @param int $processType
      *
-     * @return mixed
+     * @return void
      * @throws InvalidProcessTypeException
      */
-    public function process($data, $processType): mixed
+    public function process(array $data, int $processType): void
     {
-        return match ($processType) {
+        match ($processType) {
             OtDushiAiProcessTypes::GET_AI_IMAGES_DESCRIPTION => $this->processImageDescription($data),
-            OtDushiAiProcessTypes::GET_AI_SPREADS_GROUPS => $this->processSpreadsGroups($data),
             default => throw new InvalidProcessTypeException($processType),
         };
     }
 
-    protected function processImageDescription(array $data): void
+    /**
+     * Process image description
+     *
+     * @param array $data
+     *
+     * @return void
+     */
+    private function processImageDescription(array $data): void
     {
         if (!isset($data['images'], $data['prompt'], $data['data_id'])) {
             throw new InvalidArgumentException("Missing required keys in data");
         }
 
-        $productRepository = new ProductRepository();
-        $imageRepository = new ImageRepository();
-
-        $product = $productRepository
-            ->findOrCreateByDataId($data['data_id']);
-        $existingImages = $product
-            ->images()
-            ->get();
-
-        $imageRepository->syncImages(
-            $product->getAttribute('id'),
-            $existingImages,
-            $data['images']
-        );
+        $product = $this->productRepository->findOrCreateByDataId($data['data_id']);
+        $images = $this->syncImages($data, $product);
     }
 
     /**
-     * Process spreads groups
+     * Synchronize images for a product
      *
-     * @param mixed $data
-     * @return mixed
+     * @param array $data
+     * @param Product $product
+     *
+     * @return Collection
      */
-    protected function processSpreadsGroups(array $data)
+    private function syncImages(array $data, Product $product): Collection
     {
-        return;
+        return $this->imageService->syncImages($data['images'], $product);
     }
 }
