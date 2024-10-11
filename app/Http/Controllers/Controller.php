@@ -26,8 +26,10 @@ class Controller extends BaseController
      *
      * @return JsonResponse
      */
-    protected function respondJsonWithError(string $message, int $statusCode): JsonResponse
-    {
+    protected function respondJsonWithError(
+        string $message,
+        int $statusCode
+    ): JsonResponse {
         return response()->json(['error' => $message], $statusCode);
     }
 
@@ -35,11 +37,13 @@ class Controller extends BaseController
      * Respond with a success indicator and optional data.
      *
      * @param array $data Optional data to return along with the success indicator.
-     *
+     * @param int $statusCode The HTTP status code to return.
      * @return JsonResponse
      */
-    protected function respondJsonWithSuccess(array $data = []): JsonResponse
-    {
+    protected function respondJsonWithSuccess(
+        array $data = [],
+        int $statusCode = 200
+    ): JsonResponse {
         return response()->json(array_merge(['success' => true], $data));
     }
 }
