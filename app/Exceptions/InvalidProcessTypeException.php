@@ -12,9 +12,9 @@ class InvalidProcessTypeException extends Exception
     /**
      * Constructor
      *
-     * @param string $processType
+     * @param int $processType
      */
-    public function __construct($processType)
+    public function __construct(int $processType)
     {
         $message = "Invalid process type: $processType";
         parent::__construct($message);
