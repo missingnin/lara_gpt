@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
-use App\Services\OpenAiService;
+use App\Repositories\ImageRepository;
+use App\Repositories\ProductRepository;
+use App\Services\Clients\OpenAiClient;
+use App\Services\ImageService;
+use App\Services\ImageServiceInterface;
 use App\Services\OpenAiServiceInterface;
 use App\Services\OtDushiAiService;
 use App\Services\OtDushiAiServiceInterface;
@@ -15,8 +19,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(OpenAiServiceInterface::class, OpenAiService::class);
+        /** Services */
+        $this->app->bind(OpenAiServiceInterface::class, OpenAiClient::class);
         $this->app->bind(OtDushiAiServiceInterface::class, OtDushiAiService::class);
+        $this->app->bind(ImageServiceInterface::class, ImageService::class);
+
+        /** Repositories */
+        $this->app->bind(ImageRepository::class, ImageRepository::class);
+        $this->app->bind(ProductRepository::class, ProductRepository::class);
     }
 
     /**
@@ -24,6 +34,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        //TODO
     }
 }
