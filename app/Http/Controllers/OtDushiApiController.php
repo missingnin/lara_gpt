@@ -2,59 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\OtDushiAiServiceInterface;
+use App\Constants\OtDushiAiProcessTypes;
+use App\Exceptions\InvalidProcessTypeException;
+use App\Http\Requests\GetAiSpreadsRequest;
+use App\Services\OtDushiAi\Processors\OtDushiAiProcessor;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
+/**
+ * OtDushiApiController
+ *
+ * Controller for handling OpenAiService requests.
+ */
 class OtDushiApiController extends Controller
 {
-    /**
-     * @var OtDushiAiServiceInterface
-     */
-    private OtDushiAiServiceInterface $otDushiAi;
-
-    /**
-     * Constructor.
-     *
-     * @param OtDushiAiServiceInterface $otDushiAi
-     */
-    public function __construct(OtDushiAiServiceInterface $otDushiAi)
-    {
-        $this->otDushiAi = $otDushiAi;
-    }
-
     /**
      * Describe an image using OpenAiService.
      *
      * This method sends an image to OpenAiService for analysis and returns the response from OpenAiService.
      *
-     * @param Request $request
+     * @param GetAiSpreadsRequest $request
      *
      * @return JsonResponse
      */
-    public function getAiSpreads(Request $request): JsonResponse
+    public function getAiSpreads(GetAiSpreadsRequest $request): JsonResponse
     {
         $imagesUrl = $request->input('images');
         $prompt = $request->input('prompt');
-
-        if (empty($request->input('images')) || empty($request->input('prompt'))) {
-            return response()->json(
-                ['error' => 'Image URL and prompt are required'],
-                400
-            );
-        }
+        $processor = new OtDushiAiProcessor();
 
         try {
-            $response = $this->otDushiAi->getSpreadsFromOpenAi([$imagesUrl], $prompt);
+            $processor->process(
+                [$imagesUrl, $prompt],
+                OtDushiAiProcessTypes::GET_AI_IMAGES_DESCRIPTION
+            );
 
-            if ($response->getErrorMessage() !== null) {
-                return response()->json(['error' => $response->getErrorMessage()], $response->getErrorCode() ?? 400);
-            }
-
-            return response()->json($response->getSpreads());
+            return $this->respondJsONWithSuccess();
+        } catch (InvalidProcessTypeException $e) {
+            return $this->respondJsonWithError(
+                $e->getMessage(),
+                400
+            );
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->respondJsonWithError(
+                $e->getMessage(),
+                500
+            );
         }
     }
 }
