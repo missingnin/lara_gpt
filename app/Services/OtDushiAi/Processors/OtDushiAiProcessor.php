@@ -7,6 +7,7 @@ use App\Exceptions\InvalidProcessTypeException;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use App\Services\ImageService;
+use App\Services\ImageServiceInterface;
 use InvalidArgumentException;
 use Illuminate\Support\Collection;
 
@@ -18,7 +19,7 @@ class OtDushiAiProcessor
     /**
      * @var ImageService
      */
-    private ImageService $imageService;
+    private ImageServiceInterface $imageService;
 
     /**
      * @var ProductRepository
@@ -28,10 +29,13 @@ class OtDushiAiProcessor
     /**
      * Constructor
      *
-     * @param ImageService $imageService
+     * @param ImageServiceInterface $imageService
      * @param ProductRepository $productRepository
      */
-    public function __construct(ImageService $imageService, ProductRepository $productRepository)
+    public function __construct(
+        ImageServiceInterface $imageService,
+        ProductRepository     $productRepository
+    )
     {
         $this->imageService = $imageService;
         $this->productRepository = $productRepository;
