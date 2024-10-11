@@ -8,11 +8,11 @@ namespace App\Services;
 interface ImageServiceInterface
 {
     /**
-     * Get the image description
+     * Synchronizes images with a product
      *
-     * @param array $images
-     * @param int $productID
+     * @param array $images An array of images to synchronize
+     * @param int $productId The ID of the product to synchronize images with
      * @return void
      */
-    public function processImagesDescription(array $images, int $productID): void;
+    public function syncImages(array $images, int $productId): void;
 }
