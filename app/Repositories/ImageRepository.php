@@ -90,7 +90,7 @@ class ImageRepository
     public function imageNeedDescription(Image $image): bool
     {
         return
-            ! $image->getAttribute('description')
+            !$image->getAttribute('description')
             || $image->getAttribute('description') === self::NO_DESCRIPTION_TEXT;
     }
 }
