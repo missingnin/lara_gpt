@@ -129,8 +129,7 @@ return [
 
         'queue' => [
             'driver' => 'daily',
-            'path' => storage_path('logs'),
-            'filename' => 'queue-' . date('Y-m-d') . '.log',
+            'path' => storage_path('logs/queue/' . date('Y-m-d') . '.log'),
             'level' => 'debug',
             'days' => 15,
         ],
