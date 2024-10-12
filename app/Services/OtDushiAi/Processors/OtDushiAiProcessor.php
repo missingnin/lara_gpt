@@ -4,6 +4,7 @@ namespace App\Services\OtDushiAi\Processors;
 
 use App\Constants\OtDushiAiProcessTypes;
 use App\Exceptions\InvalidProcessTypeException;
+use App\Jobs\GetImageDescriptionJob;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use App\Services\ImageService;
@@ -73,6 +74,9 @@ class OtDushiAiProcessor
 
         $product = $this->productRepository->findOrCreateByDataId($data['data_id']);
         $images = $this->syncImages($data, $product);
+        foreach ($images->toArray() as $image) {
+            GetImageDescriptionJob::dispatch($image['name'], $data['prompt']);
+        }
     }
 
     /**
