@@ -29,33 +29,27 @@ class GetImageDescriptionJob implements ShouldQueue
     private string $prompt;
 
     /**
-     * @var OpenAiInterface OpenAI client interface
-     */
-    private OpenAiInterface $openAiClient;
-
-    /**
      * Constructor.
      *
      * @param string $imageUrl Image URL
      * @param string $prompt Prompt for image description
-     * @param OpenAiInterface $openAiClient OpenAI client interface
      */
-    public function __construct(string $imageUrl, string $prompt, OpenAiInterface $openAiClient)
+    public function __construct(string $imageUrl, string $prompt)
     {
         $this->imageUrl = $imageUrl;
         $this->prompt = $prompt;
-        $this->openAiClient = $openAiClient;
     }
 
     /**
      * Handle the job.
      *
+     * @param OpenAiInterface $openAiClient
      * @return void
      * @throws Exception
      */
-    public function handle(): void
+    public function handle(OpenAiInterface $openAiClient): void
     {
-        $imageDescriptionResult = $this->openAiClient->getImageDescription($this->imageUrl, $this->prompt);
+        $imageDescriptionResult = $openAiClient->getImageDescription($this->imageUrl, $this->prompt);
         Log::info("Image description: {$imageDescriptionResult->getContent()}");
     }
 }
