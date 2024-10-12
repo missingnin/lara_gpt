@@ -23,6 +23,16 @@ abstract class OpenAiResult
     }
 
     /**
+     * Gets the content returned by OpenAiService.
+     *
+     * @return ?string The image description returned by OpenAiService.
+     */
+    public function getContent(): ?string
+    {
+        return $this->data['content'] ?? null;
+    }
+
+    /**
      * Gets the error message returned by OpenAiService.
      *
      * @return string|null The error message returned by OpenAiService.
