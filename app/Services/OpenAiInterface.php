@@ -26,5 +26,5 @@ interface OpenAiInterface
      *
      * @throws Exception If the request to OtDushi Ai Service fails.
      */
-    public function getOtDushiAiImageDescription(string $imageUrl, string $prompt): ImageDescriptionResult;
+    public function getImageDescription(string $imageUrl, string $prompt): ImageDescriptionResult;
 }
