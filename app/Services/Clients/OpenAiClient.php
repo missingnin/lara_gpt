@@ -2,18 +2,17 @@
 
 namespace App\Services\Clients;
 
-use App\Services\OpenAiServiceInterface;
 use Exception;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
 
 /**
  * Class for interacting with OpenAI.
- * This class implements the OpenAiServiceInterface and provides methods for working with OpenAI.
+ * This class provides methods for working with OpenAI.
  *
  * @package App/Services
  */
-class OpenAiClient implements OpenAiServiceInterface
+class OpenAiClient
 {
     /**
      * Creates a request to OpenAI with the specified parameters.
@@ -28,12 +27,51 @@ class OpenAiClient implements OpenAiServiceInterface
      *
      * @throws Exception If the request to OpenAI fails.
      */
-    public function createCommonRequest(string $model, array $messages, int $maxTokens): CreateResponse
+    protected function createCommonRequest(string $model, array $messages, int $maxTokens): CreateResponse
     {
         return OpenAI::chat()->create([
             'model' => $model,
             'messages' => $messages,
             'max_tokens' => $maxTokens,
         ]);
+    }
+
+    /**
+     * Gets the image description from OpenAI.
+     *
+     * This method sends a request to OpenAI to get the image description
+     * and returns the response.
+     *
+     * @param string $imageUrl The URL of the image.
+     * @param string $prompt The prompt for the image description.
+     *
+     * @return string The image description.
+     *
+     * @throws Exception If the request to OpenAI fails.
+     */
+    public function getImageDescription(string $imageUrl, string $prompt): string
+    {
+        $model = 'gpt-4o-mini';
+        $messages = [
+            [
+                'role' => 'user',
+                'content' => [
+                    [
+                        "type" => "text",
+                        "text" => $prompt,
+                    ],
+                    [
+                        "type" => "image_url",
+                        "image_url" => [
+                            "url" => $imageUrl,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $response = $this->createCommonRequest($model, $messages, 300);
+
+        return $response->choices[0]->message->content[0]->text;
     }
 }
