@@ -14,7 +14,7 @@ class ImageRepository
     /**
      * Constant for no description text
      */
-    public const NO_DESCRIPTION_TEXT = '';
+    private const NO_DESCRIPTION_TEXT = '';
 
     /**
      * Find an image by a given attribute
