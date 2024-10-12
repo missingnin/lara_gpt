@@ -14,7 +14,7 @@ class ImageRepository
     /**
      * Constant for no description text
      */
-    const NO_DESCRIPTION_TEXT = 'No Description';
+    public const NO_DESCRIPTION_TEXT = '';
 
     /**
      * Find an image by a given attribute
@@ -68,13 +68,29 @@ class ImageRepository
     }
 
     /**
-     * Set the description of an image to "No Description"
+     * Set the description of an image to "No Description".
      *
      * @param  Image  $image  The image to update
+     * @param  string  $description  The description to set (defaults to "No Description")
      */
-    public function setNoDescription(Image $image): void
-    {
-        $image->setAttribute('description', self::NO_DESCRIPTION_TEXT);
+    public function setDescription(
+        Image $image,
+        string $description = self::NO_DESCRIPTION_TEXT
+    ): void {
+        $image->setAttribute('description', $description);
         $image->save();
+    }
+
+    /**
+     * Check if the image needs a description.
+     *
+     * @param  Image  $image  The image object
+     * @return bool True if the image needs a description, false otherwise
+     */
+    public function imageNeedDescription(Image $image): bool
+    {
+        return
+            ! $image->getAttribute('description')
+            || $image->getAttribute('description') === self::NO_DESCRIPTION_TEXT;
     }
 }
