@@ -9,7 +9,7 @@ namespace App\ValueObject;
  *
  * @package App\Services
  */
-class OtDushiAiSpreadsResult
+class ImageDescriptionResult
 {
     /**
      * @var array
@@ -27,23 +27,14 @@ class OtDushiAiSpreadsResult
     }
 
     /**
-     * Gets the data returned by OpenAiService.
+     * Gets the image description returned by OpenAiService.
      *
-     * @return array The data returned by OpenAiService.
+     * @return string The image description returned by OpenAiService.
      */
-    public function getData(): array
+    public function getImageDescription(): string
     {
-        return $this->data['content'];
-    }
-
-    /**
-     * Gets the spreads returned by OpenAiService.
-     *
-     * @return array The spreads returned by OpenAiService.
-     */
-    public function getSpreads(): array
-    {
-        return $this->data['content'] ?? [];
+        $content = $this->data['content'][0]['text'] ?? '';
+        return $content;
     }
 
     /**
