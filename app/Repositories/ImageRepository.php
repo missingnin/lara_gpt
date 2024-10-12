@@ -75,5 +75,6 @@ class ImageRepository
     public function setNoDescription(Image $image): void
     {
         $image->setAttribute('description', self::NO_DESCRIPTION_TEXT);
+        $image->save();
     }
 }
