@@ -33,8 +33,7 @@ class ImageDescriptionResult
      */
     public function getImageDescription(): string
     {
-        $content = $this->data['content'][0]['text'] ?? '';
-        return $content;
+        return $this->data['content'][0]['text'] ?? '';
     }
 
     /**
