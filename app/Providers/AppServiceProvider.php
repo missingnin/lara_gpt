@@ -7,9 +7,7 @@ use App\Repositories\ProductRepository;
 use App\Services\Clients\OpenAiClient;
 use App\Services\ImageService;
 use App\Services\ImageServiceInterface;
-use App\Services\OpenAiServiceInterface;
-use App\Services\OtDushiAiService;
-use App\Services\OtDushiAiServiceInterface;
+use App\Services\OpenAiInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,8 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         /** Services */
-        $this->app->bind(OpenAiServiceInterface::class, OpenAiClient::class);
-        $this->app->bind(OtDushiAiServiceInterface::class, OtDushiAiService::class);
+        $this->app->bind(OpenAiInterface::class, OpenAiClient::class);
         $this->app->bind(ImageServiceInterface::class, ImageService::class);
 
         /** Repositories */
