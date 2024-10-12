@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs\OtDushiAi;
+namespace App\Jobs;
 
 use App\Services\OpenAiInterface;
 use Exception;
@@ -59,4 +59,3 @@ class GetImageDescriptionJob implements ShouldQueue
         Log::info("Image description: {$imageDescriptionResult->getContent()}");
     }
 }
-
