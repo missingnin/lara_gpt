@@ -126,6 +126,14 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'queue' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs'),
+            'filename' => 'queue-' . date('Y-m-d') . '.log',
+            'level' => 'debug',
+            'days' => 15,
+        ],
     ],
 
 ];
