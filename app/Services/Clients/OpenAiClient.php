@@ -2,6 +2,9 @@
 
 namespace App\Services\Clients;
 
+use App\Services\OpenAiInterface;
+use App\ValueObject\ImageDescriptionResult;
+use App\ValueObject\OtDushiAiSpreadsResult;
 use Exception;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
@@ -12,7 +15,7 @@ use OpenAI\Responses\Chat\CreateResponse;
  *
  * @package App/Services
  */
-class OpenAiClient
+class OpenAiClient implements OpenAiInterface
 {
     /**
      * Creates a request to OpenAI with the specified parameters.
@@ -40,16 +43,16 @@ class OpenAiClient
      * Gets the image description from OpenAI.
      *
      * This method sends a request to OpenAI to get the image description
-     * and returns the response.
+     * and returns the response as an OtDushiAiSpreadsResult object.
      *
      * @param string $imageUrl The URL of the image.
      * @param string $prompt The prompt for the image description.
      *
-     * @return string The image description.
+     * @return ImageDescriptionResult The image description result.
      *
      * @throws Exception If the request to OpenAI fails.
      */
-    public function getImageDescription(string $imageUrl, string $prompt): string
+    public function getImageDescription(string $imageUrl, string $prompt): ImageDescriptionResult
     {
         $model = 'gpt-4o-mini';
         $messages = [
@@ -72,6 +75,11 @@ class OpenAiClient
 
         $response = $this->createCommonRequest($model, $messages, 300);
 
-        return $response->choices[0]->message->content[0]->text;
+        $data = [
+            'content' => $response->choices[0]->message->content,
+            'choices' => $response->choices,
+        ];
+
+        return new ImageDescriptionResult($data);
     }
 }
