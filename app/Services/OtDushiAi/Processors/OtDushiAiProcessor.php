@@ -76,7 +76,7 @@ class OtDushiAiProcessor
         $images = $this->imageService->syncImages($data['images_prompt'], $data['images'], $product);
 
         foreach ($images->toArray() as $image) {
-            ProcessImageDescriptionJob::dispatch($image['name'], $data['prompt']);
+            ProcessImageDescriptionJob::dispatch($image['name'], $data['images_prompt']);
         }
     }
 }
