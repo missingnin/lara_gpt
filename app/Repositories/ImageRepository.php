@@ -100,4 +100,20 @@ class ImageRepository
             !$image->getAttribute('description')
             || $image->getAttribute('description') === self::NO_DESCRIPTION_TEXT;
     }
+
+    /**
+     * Get the percentage of processed images for a product.
+     *
+     * @param int $productId The product ID
+     * @return int The percentage of processed images
+     */
+    public function getImagesWithDescriptionPercentage(int $productId): int
+    {
+        $totalImages = Image::where('product_id', $productId)->count();
+        $processedImages = Image::where('product_id', $productId)
+            ->whereNotNull('description')
+            ->count();
+
+        return $totalImages > 0 ? round(($processedImages / $totalImages) * 100) : 0;
+    }
 }
