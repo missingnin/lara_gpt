@@ -21,6 +21,7 @@ class Product extends Model
      */
     protected $fillable = [
         'data_id',
+        'prompt',
     ];
 
     /**

@@ -19,13 +19,13 @@ class ImageRepository
     /**
      * Find an image by a given attribute
      *
-     * @param  string  $attribute  The attribute to search by
-     * @param  mixed  $value  The value of the attribute to search for
+     * @param string $attribute The attribute to search by
+     * @param mixed $value      The value of the attribute to search for
      * @return Image|null The found image or null if not found
      */
     public function findByAttribute(string $attribute, mixed $value): ?Image
     {
-        if (! in_array($attribute, (new Image())->getFillable())) {
+        if (!in_array($attribute, (new Image())->getFillable())) {
             throw new InvalidArgumentException("Invalid attribute '$attribute'");
         }
 
@@ -39,24 +39,26 @@ class ImageRepository
      * that are not already present in the database and deleting images that are
      * no longer present in the provided image links.
      *
-     * @param  int  $productId  The ID of the product
-     * @param  Collection  $existingImages  The existing images for the product
-     * @param  array  $imageNames  The names of the images to sync
+     * @param int $productId             The ID of the product
+     * @param Collection $existingImages The existing images for the product
+     * @param array $imageNames          The names of the images to sync
      */
     public function syncImages(
         int $productId,
         Collection $existingImages,
-        array $imageNames
+        array $imageNames,
+        string $imagePrompt,
     ): void {
         $existingImageNames = $existingImages->pluck('name')->toArray();
 
         foreach ($imageNames as $index => $imageName) {
-            if (! in_array($imageName, $existingImageNames)) {
+            if (!in_array($imageName, $existingImageNames)) {
                 Image::create(
                     [
                         'product_id' => $productId,
                         'name' => $imageName,
                         'index' => $index,
+                        'prompt' => $imagePrompt,
                     ]
                 );
             }
@@ -70,8 +72,8 @@ class ImageRepository
     /**
      * Set the description of an image to "No Description".
      *
-     * @param  Image  $image  The image to update
-     * @param  string  $description  The description to set (defaults to "No Description")
+     * @param Image $image        The image to update
+     * @param string $description The description to set (defaults to "No Description")
      */
     public function setDescription(
         Image $image,
@@ -84,11 +86,16 @@ class ImageRepository
     /**
      * Check if the image needs a description.
      *
-     * @param  Image  $image  The image object
+     * @param string $imagesPrompt
+     * @param Image $image The image object
      * @return bool True if the image needs a description, false otherwise
      */
-    public function imageNeedDescription(Image $image): bool
+    public function imageNeedDescription(string $imagesPrompt, Image $image): bool
     {
+        if ($image->getAttribute('prompt') !== $imagesPrompt) {
+            return true;
+        }
+
         return
             !$image->getAttribute('description')
             || $image->getAttribute('description') === self::NO_DESCRIPTION_TEXT;

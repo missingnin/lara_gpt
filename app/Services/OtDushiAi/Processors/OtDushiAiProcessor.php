@@ -5,11 +5,8 @@ namespace App\Services\OtDushiAi\Processors;
 use App\Constants\OtDushiAiProcessTypes;
 use App\Exceptions\InvalidProcessTypeException;
 use App\Jobs\ProcessImageDescriptionJob;
-use App\Models\Product;
 use App\Repositories\ProductRepository;
-use App\Services\ImageService;
 use App\Services\ImageServiceInterface;
-use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
 /**
@@ -18,14 +15,20 @@ use InvalidArgumentException;
 class OtDushiAiProcessor
 {
     /**
-     * @var ImageService
+     * @var ImageServiceInterface
      */
     private ImageServiceInterface $imageService;
 
+    /**
+     * @var ProductRepository
+     */
     private ProductRepository $productRepository;
 
     /**
      * Constructor
+     *
+     * @param ImageServiceInterface $imageService
+     * @param ProductRepository $productRepository
      */
     public function __construct(
         ImageServiceInterface $imageService,
@@ -38,8 +41,8 @@ class OtDushiAiProcessor
     /**
      * Process data based on the process type
      *
-     * @param  mixed  $data
-     *
+     * @param array $data
+     * @param int $processType
      * @throws InvalidProcessTypeException
      */
     public function process(array $data, int $processType): void
@@ -52,26 +55,28 @@ class OtDushiAiProcessor
 
     /**
      * Process image description
+     *
+     * @param array $data
+     * @throws InvalidArgumentException
      */
     private function processImageDescription(array $data): void
     {
-        if (! isset($data['images'], $data['prompt'], $data['data_id'])) {
+        if (
+            !isset(
+                $data['images'],
+                $data['images_prompt'],
+                $data['spreads_prompt'],
+                $data['data_id']
+            )
+        ) {
             throw new InvalidArgumentException('Missing required keys in data');
         }
 
-        $product = $this->productRepository->findOrCreateByDataId($data['data_id']);
-        $images = $this->syncImages($data, $product);
+        $product = $this->productRepository->findOrCreateByDataId($data['data_id'], $data['spreads_prompt']);
+        $images = $this->imageService->syncImages($data['images_prompt'], $data['images'], $product);
 
         foreach ($images->toArray() as $image) {
-            ProcessImageDescriptionJob::dispatch($image['name'], $data['prompt']);
+            ProcessImageDescriptionJob::dispatch($image['name'], $data['images_prompt']);
         }
-    }
-
-    /**
-     * Synchronize images for a product
-     */
-    private function syncImages(array $data, Product $product): Collection
-    {
-        return $this->imageService->syncImages($data['images'], $product);
     }
 }
