@@ -95,7 +95,7 @@ class ImageService implements ImageServiceInterface
         $image->setAttribute('description', $imageDescription);
 
         if($product) {
-            if ($image->getAttribute('index') < $product->images()->count()) {
+            if ($image->getAttribute('index') === ($product->images()->count() - 1)) {
                 Log::info('here be a event');
             }
         }
