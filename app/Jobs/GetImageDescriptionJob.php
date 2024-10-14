@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Repositories\ImageRepository;
 use App\Services\ImageService;
+use App\Services\ImageServiceInterface;
 use App\Services\OpenAiInterface;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -57,7 +58,7 @@ class GetImageDescriptionJob extends AbstractJob implements ShouldQueue
      * @return void
      * @throws Exception
      */
-    public function handle(ImageRepository $imageRepository, OpenAiInterface $openAiClient): void
+    public function handle(ImageServiceInterface $imageService, OpenAiInterface $openAiClient): void
     {
         $this->logInfo('Handling GetImageDescriptionJob...');
         try {
@@ -65,10 +66,8 @@ class GetImageDescriptionJob extends AbstractJob implements ShouldQueue
                 $this->imageUrl,
                 $this->imagesPrompt
             );
-
             if ($imageDescriptionResult->getContent()) {
-                $image = $imageRepository->findByAttribute('name', $imageDescriptionResult->getContent());
-                $imageRepository->setDescription($image, $imageDescriptionResult->getContent());
+                $imageService->handleImageDescription($imageDescriptionResult->getContent(), $this->imageUrl);
                 $this->logInfo("Image description OK");
             } else {
                 $this->logError("No image description returned from OpenAI");
