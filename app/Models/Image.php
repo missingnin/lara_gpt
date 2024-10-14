@@ -25,6 +25,7 @@ class Image extends Model
     protected $fillable = [
         'product_id',
         'name',
+        'prompt',
         'description',
         'index',
         'tokens_cost',
