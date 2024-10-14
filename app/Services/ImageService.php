@@ -45,16 +45,18 @@ class ImageService implements ImageServiceInterface
      *
      * Synchronizes the images with the product and returns the updated image collection
      *
-     * @param array $images An array of images to synchronize
-     * @param Product $product The product to synchronize images with
+     * @param string $imagesPrompt An images Prompt Text
+     * @param array $images        An array of images to synchronize
+     * @param Product $product     The product to synchronize images with
      * @return Collection The updated image collection
      */
-    public function syncImages(array $images, Product $product): Collection
+    public function syncImages(string $imagesPrompt, array $images, Product $product): Collection
     {
         $this->imageRepository->syncImages(
             $product->getAttribute('id'),
             $product->images()->get(),
             $images,
+            $imagesPrompt
         );
 
         return $product->images()->get();
