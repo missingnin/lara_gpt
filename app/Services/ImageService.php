@@ -114,6 +114,7 @@ class ImageService implements ImageServiceInterface
         }
 
         $image->setAttribute('description', $imageDescription);
+        $image->save();
 
         $percentage = $this
             ->imageRepository
