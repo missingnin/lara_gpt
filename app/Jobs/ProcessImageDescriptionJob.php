@@ -45,8 +45,7 @@ class ProcessImageDescriptionJob extends AbstractJob implements ShouldQueue
         $this->imagesPrompt = $imagesPrompt;
         $this->logInfo(
             "ProcessImageDescriptionJob constructed with image URL: 
-            {$this->imageUrl} 
-            and imagesPrompt: {$this->imagesPrompt}"
+            $this->imageUrl"
         );
     }
 
