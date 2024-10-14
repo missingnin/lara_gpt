@@ -6,8 +6,6 @@ class GetAiSpreadsRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -16,14 +14,13 @@ class GetAiSpreadsRequest extends BaseRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
         return [
             'images' => 'required',
-            'prompt' => 'required',
+            'images_prompt' => 'required|string',
+            'spreads_prompt' => 'required|string',
             'data_id' => 'required|integer',
         ];
     }
@@ -31,12 +28,11 @@ class GetAiSpreadsRequest extends BaseRequest
     /**
      * Get the validated data from the request.
      *
-     * @param null $key
-     * @param null $default
-     * @return array
+     * @param  null  $key
+     * @param  null  $default
      */
     public function validated($key = null, $default = null): array
     {
-        return $this->only(['images', 'prompt', 'data_id']);
+        return $this->only(['images', 'images_prompt', 'spreads_prompt', 'data_id']);
     }
 }
