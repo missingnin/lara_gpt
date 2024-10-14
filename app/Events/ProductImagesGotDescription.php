@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 /**
  * Event triggered when all images have descriptions.
  */
-class ProductImagesGotDescriptionEvent
+class ProductImagesGotDescription
 {
     use Dispatchable;
     use InteractsWithSockets;

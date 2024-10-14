@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use App\Events\ImageDescriptionUpdatedEvent;
-use App\Listeners\LogImageDescriptionUpdated;
+use App\Events\ImageDescriptionUpdated;
+use App\Events\ProductImagesGotDescription;
+use App\Listeners\CheckProductImagesDescription;
+use App\Listeners\TriggerOtDushiAiProcessor;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -20,8 +22,11 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        ImageDescriptionUpdatedEvent::class => [
-            LogImageDescriptionUpdated::class,
+        ImageDescriptionUpdated::class => [
+            CheckProductImagesDescription::class,
+        ],
+        ProductImagesGotDescription::class => [
+            TriggerOtDushiAiProcessor::class,
         ],
     ];
 

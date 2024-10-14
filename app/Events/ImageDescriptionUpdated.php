@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 /**
  * Event triggered when an image description is updated.
  */
-class ImageDescriptionUpdatedEvent
+class ImageDescriptionUpdated
 {
     use Dispatchable;
     use InteractsWithSockets;

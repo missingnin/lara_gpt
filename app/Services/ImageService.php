@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Events\ImageDescriptionUpdatedEvent;
+use App\Events\ImageDescriptionUpdated;
 use App\Models\Product;
 use App\Repositories\ImageRepository;
 use GuzzleHttp\Client;
@@ -122,6 +122,6 @@ class ImageService implements ImageServiceInterface
                 $product->getAttribute('id')
             );
 
-        event(new ImageDescriptionUpdatedEvent($product->id, $percentage));
+        event(new ImageDescriptionUpdated($product->id, $percentage));
     }
 }
