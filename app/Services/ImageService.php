@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Events\ImageDescriptionUpdatedEvent;
 use App\Models\Product;
 use App\Repositories\ImageRepository;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
@@ -83,21 +85,42 @@ class ImageService implements ImageServiceInterface
     }
 
     /**
-     * Handles image description
+     * Handles image description and returns the percentage of processed images.
+     *
+     * @param string $imageDescription
+     * @param string $imageUrl
+     * @return int The percentage of processed images
+     */
+
+    /**
+     * Handles image description and dispatches an event with the percentage of processed images.
      *
      * @param string $imageDescription
      * @param string $imageUrl
      * @return void
      */
-    public function handleImageDescription(string $imageDescription, string $imageUrl): void {
+    public function handleImageDescription(string $imageDescription, string $imageUrl): void
+    {
         $image = $this->imageRepository->findByAttribute('name', $imageUrl);
+
+        if (!$image) {
+            throw new ModelNotFoundException();
+        }
+
         $product = $image->product()->first();
+
+        if (!$product) {
+            throw new ModelNotFoundException();
+        }
+
         $image->setAttribute('description', $imageDescription);
 
-        if($product) {
-            if ($image->getAttribute('index') === ($product->images()->count() - 1)) {
-                Log::info('here be a event');
-            }
-        }
+        $percentage = $this
+            ->imageRepository
+            ->getImagesWithDescriptionPercentage(
+                $product->getAttribute('id')
+            );
+
+        event(new ImageDescriptionUpdatedEvent($product->id, $percentage));
     }
 }
