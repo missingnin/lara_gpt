@@ -14,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 /**
  * Class ProcessImageDescriptionJob
  *
- * This job processes the image description for a given image URL and prompt.
+ * This job processes the image description for a given image URL and imagesPrompt.
  */
 class ProcessImageDescriptionJob extends AbstractJob implements ShouldQueue
 {
@@ -29,21 +29,25 @@ class ProcessImageDescriptionJob extends AbstractJob implements ShouldQueue
     private string $imageUrl;
 
     /**
-     * @var string Prompt for image description
+     * @var string imagesPrompt for image description
      */
-    private string $prompt;
+    private string $imagesPrompt;
 
     /**
      * Constructor.
      *
-     * @param  string  $imageUrl  Image URL
-     * @param  string  $prompt  Prompt for image description
+     * @param string $imageUrl Image URL
+     * @param string $imagesPrompt
      */
-    public function __construct(string $imageUrl, string $prompt)
+    public function __construct(string $imageUrl, string $imagesPrompt)
     {
         $this->imageUrl = $imageUrl;
-        $this->prompt = $prompt;
-        $this->logInfo("Job constructed with image URL: {$this->imageUrl} and prompt: {$this->prompt}");
+        $this->imagesPrompt = $imagesPrompt;
+        $this->logInfo(
+            "Job constructed with image URL: 
+            {$this->imageUrl} 
+            and imagesPrompt: {$this->imagesPrompt}"
+        );
     }
 
     /**
@@ -53,26 +57,23 @@ class ProcessImageDescriptionJob extends AbstractJob implements ShouldQueue
     {
         $this->logInfo('Handling image description processing...');
         $image = $imageRepository->findByAttribute('name', $this->imageUrl);
-        $this->logInfo('Image found: '.($image ? 'yes' : 'no'));
 
         if ($image) {
-            if ($imageRepository->imageNeedDescription($image)) {
+            if ($imageRepository->imageNeedDescription($this->imagesPrompt, $image)) {
                 $this->logInfo('Image needs description. Processing...');
                 $this->processImageDescription($image, $imageService, $imageRepository);
             } else {
                 $this->logInfo('Image already has description. Skipping.');
             }
-        } else {
-            $this->logInfo('Image not found. Skipping.');
         }
     }
 
     /**
      * Process the image description.
      *
-     * @param  Image  $image  The image object
-     * @param  ImageServiceInterface  $imageService  The image service instance
-     * @param  ImageRepository  $imageRepository  The image repository instance
+     * @param Image $image The image object
+     * @param ImageServiceInterface $imageService The image service instance
+     * @param ImageRepository $imageRepository The image repository instance
      */
     private function processImageDescription(
         Image $image,
@@ -81,8 +82,10 @@ class ProcessImageDescriptionJob extends AbstractJob implements ShouldQueue
     ): void {
         $this->logInfo('Processing image description...');
         if ($imageService->isImageUrlAccessible($this->imageUrl)) {
-            $this->logInfo('Image URL is accessible. Dispatching GetImageDescriptionJob.');
-            GetImageDescriptionJob::dispatch($this->imageUrl, $this->prompt);
+            $this->logInfo(
+                'Image URL is accessible. Dispatching GetImageDescriptionJob.'
+            );
+            GetImageDescriptionJob::dispatch($this->imageUrl, $this->imagesPrompt);
         } else {
             $this->logInfo('Image URL is not accessible. Handling inaccessible image...');
             $this->handleInaccessibleImage($image, $imageRepository);
@@ -92,8 +95,8 @@ class ProcessImageDescriptionJob extends AbstractJob implements ShouldQueue
     /**
      * Handle the inaccessible image.
      *
-     * @param  Image  $image  The image object (maybe null)
-     * @param  ImageRepository  $imageRepository  The image repository instance
+     * @param Image $image The image object (maybe null)
+     * @param ImageRepository $imageRepository The image repository instance
      */
     private function handleInaccessibleImage(
         Image $image,
@@ -101,6 +104,5 @@ class ProcessImageDescriptionJob extends AbstractJob implements ShouldQueue
     ): void {
         $this->logInfo('Image found in repository, but URL Inaccessible - "No Description"');
         $imageRepository->setDescription($image);
-        $this->logInfo("Set 'No Description' for image: {$this->imageUrl}");
     }
 }
