@@ -72,7 +72,7 @@ class OtDushiAiProcessor
             throw new InvalidArgumentException('Missing required keys in data');
         }
 
-        $product = $this->productRepository->findOrCreateByDataId($data['data_id']);
+        $product = $this->productRepository->findOrCreateByDataId($data['data_id'], $data['spreads_prompt']);
         $images = $this->imageService->syncImages($data['images_prompt'], $data['images'], $product);
 
         foreach ($images->toArray() as $image) {
