@@ -55,7 +55,14 @@ class OtDushiAiProcessor
      */
     private function processImageDescription(array $data): void
     {
-        if (! isset($data['images'], $data['prompt'], $data['data_id'])) {
+        if (
+            !isset(
+                $data['images'],
+                $data['images_prompt'],
+                $data['images_prompt'],
+                $data['data_id']
+            )
+        ) {
             throw new InvalidArgumentException('Missing required keys in data');
         }
 
