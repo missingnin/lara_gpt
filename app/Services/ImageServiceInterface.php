@@ -31,4 +31,14 @@ interface ImageServiceInterface
      * @return bool True if the image is accessible, false otherwise
      */
     public function isImageUrlAccessible(string $imageUrl): bool;
+
+    /**
+     * Handles image description
+     *
+     * @param string $imageDescription
+     * @param string $imageUrl
+     *
+     * @return void
+     */
+    public function handleImageDescription(string $imageDescription, string $imageUrl): void;
 }
