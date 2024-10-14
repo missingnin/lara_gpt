@@ -46,7 +46,8 @@ class ImageRepository
     public function syncImages(
         int $productId,
         Collection $existingImages,
-        array $imageNames
+        array $imageNames,
+        string $imagePrompt,
     ): void {
         $existingImageNames = $existingImages->pluck('name')->toArray();
 
@@ -57,6 +58,7 @@ class ImageRepository
                         'product_id' => $productId,
                         'name' => $imageName,
                         'index' => $index,
+                        'prompt' => $imagePrompt,
                     ]
                 );
             }
