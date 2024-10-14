@@ -7,6 +7,7 @@ use App\Repositories\ImageRepository;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Image service class
@@ -78,6 +79,25 @@ class ImageService implements ImageServiceInterface
             return $response->getStatusCode() === 200;
         } catch (GuzzleException) {
             return false;
+        }
+    }
+
+    /**
+     * Handles image description
+     *
+     * @param string $imageDescription
+     * @param string $imageUrl
+     * @return void
+     */
+    public function handleImageDescription(string $imageDescription, string $imageUrl): void {
+        $image = $this->imageRepository->findByAttribute('name', $imageUrl);
+        $product = $image->product()->first();
+        $image->setAttribute('description', $imageDescription);
+
+        if($product) {
+            if ($image->getAttribute('index') < $product->images()->count()) {
+                Log::info('here be a event');
+            }
         }
     }
 }
