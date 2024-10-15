@@ -18,17 +18,11 @@ class ProductRepository
      */
     public function findOrCreateByDataId(int $dataId, string $prompt): Product
     {
-        $product = Product::where('data_id', $dataId)->first();
-
-        if (!$product) {
-            $product = Product::create(
-                [
-                    'data_id' => $dataId,
-                    'prompt' => $prompt,
-                ]
-            );
-        }
-
-        return $product;
+        return Product::updateOrCreate(
+            ['data_id' => $dataId],
+            [
+                'prompt' => $prompt,
+            ]
+        );
     }
 }
