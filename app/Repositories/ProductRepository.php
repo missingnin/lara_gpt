@@ -55,4 +55,17 @@ class ProductRepository
 
         return $imagesWithDescription;
     }
+
+    /**
+     * Checks if a product spread needs updating based on the provided prompt.
+     *
+     * @param int  $id     The ID of the product to check
+     * @param string $prompt The prompt to compare with the product's current prompt
+     *
+     * @return bool True if the product spread needs updating, false otherwise
+     */
+    public function productSpreadNeedUpdating(int $id, string $prompt): bool {
+        $product = $this->find($id);
+        return $product->getAttribute('prompt') !== $prompt;
+    }
 }
