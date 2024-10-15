@@ -62,8 +62,9 @@ class ProductService implements ProductServiceInterface
     {
         return $images->filter(function ($image) use ($imagesPrompt) {
             return
-                empty($image->description)
-                && $image->getAttribute('prompt') !== $imagesPrompt;
+                empty($image->getAttribute('description'))
+                || $image->getAttribute('description') === $this->imageRepository::NO_DESCRIPTION_TEXT
+                || $image->getAttribute('prompt') !== $imagesPrompt;
         });
     }
 }
