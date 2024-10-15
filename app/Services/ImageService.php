@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Image service class
@@ -83,14 +82,6 @@ class ImageService implements ImageServiceInterface
             return false;
         }
     }
-
-    /**
-     * Handles image description and returns the percentage of processed images.
-     *
-     * @param string $imageDescription
-     * @param string $imageUrl
-     * @return int The percentage of processed images
-     */
 
     /**
      * Handles image description and dispatches an event with the percentage of processed images.
