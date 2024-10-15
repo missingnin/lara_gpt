@@ -5,6 +5,7 @@ namespace App\Services\OtDushiAi\Processors;
 use App\Constants\OtDushiAiProcessTypes;
 use App\Events\ProductImagesGotDescription;
 use App\Exceptions\InvalidProcessTypeException;
+use App\Jobs\GetSpreadsGroupsJob;
 use App\Jobs\ProcessImageDescriptionJob;
 use App\Repositories\ProductRepository;
 use App\Services\ImageServiceInterface;
@@ -118,10 +119,12 @@ class OtDushiAiProcessor
                 ->productService
                 ->imagesForUpdatingDescription($data['images_prompt'], $images);
 
-            if($imagesForUpdate->isEmpty()) {
-                event(new ProductImagesGotDescription(
-                    $product->getAttribute('id')
-                ));
+            if ($imagesForUpdate->isEmpty()) {
+                event(
+                    new ProductImagesGotDescription(
+                        $product->getAttribute('id')
+                    )
+                );
 
                 return;
             }
@@ -151,7 +154,15 @@ class OtDushiAiProcessor
         }
 
         $this->logger->info('Retrieving images with descriptions for product id ' . $data['product_id']);
-        $imagesWithDescription = $this->productRepository->getImagesWithDescription($data['product_id']);
+        $imagesWithDescription = $this
+            ->productRepository
+            ->getImagesWithDescription($data['product_id']);
+        $spreadsPrompt = $this
+            ->productRepository
+            ->find($data['product_id'])
+            ->getAttribute('prompt');
+
+        GetSpreadsGroupsJob::dispatch($imagesWithDescription, $spreadsPrompt);
 
         $this->logger->info('Retrieved images with descriptions:', $imagesWithDescription);
     }

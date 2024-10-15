@@ -7,7 +7,7 @@ use App\ValueObject\OpenAiResult;
 /**
  * Class for representing the result of an image description request to OpenAiService.
  */
-class SpreadsDescriptionResult extends OpenAiResult
+class SpreadsGroupsResult extends OpenAiResult
 {
 
 }

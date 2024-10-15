@@ -5,6 +5,7 @@ namespace App\Services\Clients;
 use App\Services\OpenAiInterface;
 use App\ValueObject\ImageDescriptionResult;
 use App\ValueObject\OtDushiAiSpreadsResult;
+use App\ValueObject\SpreadsGroupsResult;
 use Exception;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse;
@@ -81,5 +82,47 @@ class OpenAiClient implements OpenAiInterface
         ];
 
         return new ImageDescriptionResult($data);
+    }
+
+    /**
+     * Gets the spreads groups from OpenAI.
+     *
+     * This method sends a request to OpenAI to get the spreads groups
+     * and returns the response as an OtDushiAiSpreadsResult object.
+     *
+     * @param array $imagesWithDescription The images with descriptions.
+     * @param string $prompt               The prompt for the spreads groups.
+     *
+     * @return SpreadsGroupsResult The spreads groups result.
+     *
+     * @throws \Exception If the request to OpenAI fails.
+     */
+    public function getSpreadsGroups(array $imagesWithDescription, string $prompt): SpreadsGroupsResult
+    {
+        $model = 'gpt-4o-mini';
+        $messages = [
+            [
+                'role' => 'user',
+                'content' => [
+                    [
+                        "type" => "text",
+                        "text" => $prompt,
+                    ],
+                    [
+                        "type" => "text",
+                        "text" => json_encode($imagesWithDescription),
+                    ],
+                ],
+            ],
+        ];
+
+        $response = $this->createCommonRequest($model, $messages, 300);
+
+        $data = [
+            'content' => $response->choices[0]->message->content,
+            'choices' => $response->choices,
+        ];
+
+        return new SpreadsGroupsResult($data);
     }
 }
