@@ -36,4 +36,23 @@ class ProductRepository
             ]
         );
     }
+
+    /**
+     * Retrieves images with descriptions for a given product ID.
+     *
+     * @param int $productId The ID of the product to retrieve images for.
+     * @return array An array of images with descriptions.
+     */
+    public function getImagesWithDescription(int $productId): array
+    {
+        $images = $this->find($productId)->images()->get();
+        $imagesWithDescription = [];
+
+        foreach ($images as $image) {
+            $imagesWithDescription[basename($image->getAttribute('name'))]
+                = $image->getAttribute('description');
+        }
+
+        return $imagesWithDescription;
+    }
 }
