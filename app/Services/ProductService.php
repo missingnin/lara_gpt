@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Repositories\ImageRepository;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Class for product services.
@@ -49,5 +49,21 @@ class ProductService implements ProductServiceInterface
         );
 
         return $product->images()->get();
+    }
+
+    /**
+     * Get a collection of images of the product that need a description update.
+     *
+     * @param string $imagesPrompt
+     * @param Collection $images
+     * @return Collection A collection of images that need a description update
+     */
+    public function imagesForUpdatingDescription(string $imagesPrompt, Collection $images): Collection
+    {
+        return $images->filter(function ($image) use ($imagesPrompt) {
+            return
+                empty($image->description)
+                && $image->getAttribute('prompt') !== $imagesPrompt;
+        });
     }
 }
