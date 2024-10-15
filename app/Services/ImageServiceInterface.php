@@ -2,25 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\Product;
-use Illuminate\Support\Collection;
-
 /**
  * Interface for image services
  */
 interface ImageServiceInterface
 {
-    /**
-     * Synchronizes images with a product
-     *
-     * @param string $imagesPrompt
-     * @param array $images An array of images to synchronize
-     * @param Product $product
-     *
-     * @return Collection
-     */
-    public function syncImages(string $imagesPrompt, array $images, Product $product): Collection;
-
     /**
      * Check if an image is accessible by its URL.
      *
