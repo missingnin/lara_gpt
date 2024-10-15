@@ -3,6 +3,7 @@
 namespace App\Services\OtDushiAi\Processors;
 
 use App\Constants\OtDushiAiProcessTypes;
+use App\Events\ProductImagesGotDescription;
 use App\Exceptions\InvalidProcessTypeException;
 use App\Jobs\ProcessImageDescriptionJob;
 use App\Repositories\ProductRepository;
@@ -103,10 +104,29 @@ class OtDushiAiProcessor
                 throw new InvalidArgumentException('Missing required keys in data');
             }
 
-            $product = $this->productRepository->findOrCreateByDataId($data['data_id'], $data['spreads_prompt']);
-            $images = $this->productService->syncImages($data['images_prompt'], $data['images'], $product);
+            $product = $this
+                ->productRepository
+                ->findOrCreateByDataId($data['data_id'], $data['spreads_prompt']);
+            $images = $this
+                ->productService
+                ->syncImages(
+                    $data['images_prompt'],
+                    $data['images'],
+                    $product
+                );
+            $imagesForUpdate = $this
+                ->productService
+                ->imagesForUpdatingDescription($data['images_prompt'], $images);
 
-            foreach ($images->toArray() as $image) {
+            if($imagesForUpdate->isEmpty()) {
+                event(new ProductImagesGotDescription(
+                    $product->getAttribute('id')
+                ));
+
+                return;
+            }
+
+            foreach ($imagesForUpdate->toArray() as $image) {
                 $this->logger->info('Dispatching ProcessImageDescriptionJob for image ' . $image['name']);
                 ProcessImageDescriptionJob::dispatch($image['name'], $data['images_prompt']);
             }

@@ -58,21 +58,16 @@ class ProcessImageDescriptionJob extends AbstractJob implements ShouldQueue
         $image = $imageRepository->findByAttribute('name', $this->imageUrl);
 
         if ($image) {
-            if ($imageRepository->imageNeedDescription($this->imagesPrompt, $image)) {
-                $this->logInfo('Image needs description. Processing...');
-                $this->processImageDescription($image, $imageService, $imageRepository);
-            } else {
-                $this->logInfo('Image already has description. Skipping.');
-            }
+            $this->processImageDescription($image, $imageService, $imageRepository);
         }
     }
 
     /**
      * Process the image description.
      *
-     * @param Image $image The image object
+     * @param Image $image                        The image object
      * @param ImageServiceInterface $imageService The image service instance
-     * @param ImageRepository $imageRepository The image repository instance
+     * @param ImageRepository $imageRepository    The image repository instance
      */
     private function processImageDescription(
         Image $image,
@@ -94,7 +89,7 @@ class ProcessImageDescriptionJob extends AbstractJob implements ShouldQueue
     /**
      * Handle the inaccessible image.
      *
-     * @param Image $image The image object (maybe null)
+     * @param Image $image                     The image object (maybe null)
      * @param ImageRepository $imageRepository The image repository instance
      */
     private function handleInaccessibleImage(
