@@ -28,12 +28,13 @@ class TriggerOtDushiAiProcessor implements ShouldQueue
      */
     public function handle(
         ProductImagesGotDescription $event,
-        OtDushiAiProcessor $processor
     ): void {
         Log::info(
             "Triggering OtDushi AI processor for product ID: 
             $event->productId"
         );
+
+        $processor = app(OtDushiAiProcessor::class);
 
         $data = [
             'product_id' => $event->productId,
