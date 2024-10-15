@@ -54,6 +54,10 @@ class ProductService implements ProductServiceInterface
     /**
      * Get a collection of images of the product that need a description update.
      *
+     * Filters the images based on the following criteria:
+     * - The image description is empty or set to "No Description"
+     * - The image prompt does not match the provided $imagesPrompt
+     *
      * @param string $imagesPrompt
      * @param Collection $images
      * @return Collection A collection of images that need a description update
@@ -61,10 +65,7 @@ class ProductService implements ProductServiceInterface
     public function imagesForUpdatingDescription(string $imagesPrompt, Collection $images): Collection
     {
         return $images->filter(function ($image) use ($imagesPrompt) {
-            return
-                empty($image->getAttribute('description'))
-                || $image->getAttribute('description') === $this->imageRepository::NO_DESCRIPTION_TEXT
-                || $image->getAttribute('prompt') !== $imagesPrompt;
+            return $this->imageRepository->imageNeedDescription($imagesPrompt, $image);
         });
     }
 }
