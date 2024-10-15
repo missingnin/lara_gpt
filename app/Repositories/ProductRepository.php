@@ -10,6 +10,17 @@ use App\Models\Product;
 class ProductRepository
 {
     /**
+     * Find a product by product ID
+     *
+     * @param int $id
+     * @return Product|null
+     */
+    public function find(int $id): ?Product
+    {
+        return Product::findOrFal($id);
+    }
+
+    /**
      * Find or create a product by product ID
      *
      * @param int $dataId
