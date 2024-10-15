@@ -17,7 +17,7 @@ class ProductRepository
      */
     public function find(int $id): ?Product
     {
-        return Product::findOrFal($id);
+        return Product::findOrFail($id);
     }
 
     /**
