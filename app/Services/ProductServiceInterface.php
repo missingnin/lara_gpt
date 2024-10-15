@@ -20,4 +20,13 @@ interface ProductServiceInterface
      * @return Collection A collection of synchronized images
      */
     public function syncImages(string $imagesPrompt, array $images, Product $product): Collection;
+
+    /**
+     * Get a collection of images of the product that need a description update.
+     *
+     * @param string $imagesPrompt
+     * @param Collection $images
+     * @return Collection A collection of images that need a description update
+     */
+    public function imagesForUpdatingDescription(string $imagesPrompt, Collection $images): Collection;
 }
