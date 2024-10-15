@@ -7,6 +7,7 @@ use App\Exceptions\InvalidProcessTypeException;
 use App\Jobs\ProcessImageDescriptionJob;
 use App\Repositories\ProductRepository;
 use App\Services\ImageServiceInterface;
+use App\Services\ProductServiceInterface;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 
@@ -19,6 +20,11 @@ class OtDushiAiProcessor
      * @var ImageServiceInterface
      */
     private ImageServiceInterface $imageService;
+
+    /**
+     * @var ProductServiceInterface
+     */
+    private ProductServiceInterface $productService;
 
     /**
      * @var ProductRepository
@@ -34,15 +40,18 @@ class OtDushiAiProcessor
      * Constructor
      *
      * @param ImageServiceInterface $imageService
+     * @param ProductServiceInterface $productService
      * @param ProductRepository $productRepository
      * @param LoggerInterface $logger
      */
     public function __construct(
         ImageServiceInterface $imageService,
+        ProductServiceInterface $productService,
         ProductRepository $productRepository,
         LoggerInterface $logger
     ) {
         $this->imageService = $imageService;
+        $this->productService = $productService;
         $this->productRepository = $productRepository;
         $this->logger = $logger;
     }
@@ -95,7 +104,7 @@ class OtDushiAiProcessor
             }
 
             $product = $this->productRepository->findOrCreateByDataId($data['data_id'], $data['spreads_prompt']);
-            $images = $this->imageService->syncImages($data['images_prompt'], $data['images'], $product);
+            $images = $this->productService->syncImages($data['images_prompt'], $data['images'], $product);
 
             foreach ($images->toArray() as $image) {
                 $this->logger->info('Dispatching ProcessImageDescriptionJob for image ' . $image['name']);
