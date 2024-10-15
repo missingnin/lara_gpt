@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Repositories\ImageRepository;
-use App\Repositories\ProductRepository;
 use App\Services\Clients\OpenAiClient;
 use App\Services\ImageService;
 use App\Services\ImageServiceInterface;
 use App\Services\OpenAiInterface;
+use App\Services\ProductService;
+use App\Services\ProductServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,10 +20,7 @@ class AppServiceProvider extends ServiceProvider
         /** Services */
         $this->app->bind(OpenAiInterface::class, OpenAiClient::class);
         $this->app->bind(ImageServiceInterface::class, ImageService::class);
-
-        /** Repositories */
-        $this->app->bind(ImageRepository::class, ImageRepository::class);
-        $this->app->bind(ProductRepository::class, ProductRepository::class);
+        $this->app->bind(ProductServiceInterface::class, ProductService::class);
     }
 
     /**
@@ -31,6 +28,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //TODO
+        //
     }
 }
